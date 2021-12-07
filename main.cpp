@@ -73,6 +73,13 @@ static float centerX = 0.0;
 static float centerY = 0.0;
 static float centerZ = 0.0;
 
+static float theta = 1.572;
+static float phi = 0.0;
+
+static float radius = 10.0;     // promień
+
+static float viewer[] = { 0.0, 0.0, 10.0 };   // inicjalizacja położenia obserwatora
+
 // Parametry pierwszego źródła światła
 static float lightPosition[] = {0.0, 0.0, 10.0, 1.0};
 
@@ -166,8 +173,6 @@ void Triangle() {
     glCullFace(GL_BACK);
 }
 
-
-
 void Pyramid() {
     glCullFace(GL_FRONT);
     glColor3f(1.0, 1.0, 1.0);
@@ -259,30 +264,55 @@ void Egg() {
 
 
 void renderScene() {
+    glDisable(GL_CULL_FACE);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);        // czyszczenie okna aktualnym kolorem czyszczącym
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // czyszczenie okna aktualnym kolorem czyszczącym
 
-    glLoadIdentity();    // czyszczenie macierzy bieżącej
+    glLoadIdentity();
+    // czyszczenie macierzy bieżącej
 
     // Obliczanie azymutu oraz elewacji dla obracanego obiektu
-    if (status == 1) {      // jeśli lewy klawisz myszy wciśnięty
-        objectRotation[0] += delta_x * pix2angle;
-        objectRotation[1] += delta_y * pix2angle;
+    if (status == 1) {                  // jeśli lewy klawisz myszy wciśnięty
+        theta += (delta_x * pix2angle) / 100;    // modyfikacja kąta obrotu o kąt proporcjonalny
+        phi += (delta_y * pix2angle) / 100;
 
-        if (objectRotation[0] > 360.0) objectRotation[0] -= 360.0;
-        else if (objectRotation[0] < -360.0) objectRotation[0] += 360.0;
-        if (objectRotation[1] > 360) objectRotation[1] -= 360.0;
-        else if (objectRotation[1] < -360.0) objectRotation[1] += 360.0;
+        if (theta > 360.0) theta -= 360.0;
+        else if (theta < -360.0) theta += 360.0;
+        if (phi > 360) phi -= 360.0;
+        else if (phi < -360.0) phi += 360.0;
 
-    } else if (status == 2) {       // jeśli prawy klawisz myszy wciśnięty
-        viewerZ += delta_y / 10;
-
+    } else if (status == 2) {        // jeśli prawy klawisz myszy wciśnięty
+        radius += delta_y / 10;
+        if (radius > 20) {
+            radius = 20;
+        } else if (radius > 1) {
+            centerX = 0;
+            centerY = 0;
+            centerZ = 0;
+        }
     }
+    viewer[0] = radius * cos(theta) * cos(phi);
+    viewer[1] = radius * sin(phi);
+    viewer[2] = radius * sin(theta) * cos(phi);
+    if(radius <= 1) {
+            centerX = viewer[0] - 1;
+            centerY = viewer[1] - 1;
+            centerZ = viewer[2] - 1;
+    }
+    ///
 
-    gluLookAt(0.0, 0.0, viewerZ, centerX, centerY, centerZ, 0.0, 1.0, 0.0);
+    cout << "centerX: " << centerX << " centerY: " << centerY << " centerZ: " << centerZ << endl;
+    cout << "viewer[0]: " << viewer[0] << " viewer[1]: " << viewer[1] << " viewer[2]: " << viewer[2] << endl<<endl;
+
+    gluLookAt(viewer[0], viewer[1], viewer[2], centerX, centerY, centerZ, 0.0, 1.0, 0.0);
+    lightPosition[0] = viewer[0];
+    lightPosition[1] = viewer[1];
+    lightPosition[2] = viewer[2];
+
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glRotatef(objectRotation[0], 0.0, 1.0, 0.0);
-    glRotatef(objectRotation[1], 1.0, 0.0, 0.0);
+    //glRotatef(objectRotation[0], 0.0, 1.0, 0.0);
+    //glRotatef(objectRotation[1], 1.0, 0.0, 0.0);
 
     if (objectMode == 1) Triangle();
     else if (objectMode == 2) Pyramid();
