@@ -67,6 +67,7 @@ static float delta_y = 0;        // różnica pomiędzy pozycją bieżącą i po
 
 
 static float viewerZ = 10.0;
+static float help = 10.0;
 
 // Parametry położenia obiektu na układzie współrzędnych
 static float centerX = 0.0;
@@ -275,14 +276,18 @@ void renderScene() {
         else if (objectRotation[1] < -360.0) objectRotation[1] += 360.0;
 
     } else if (status == 2) {       // jeśli prawy klawisz myszy wciśnięty
-        viewerZ += delta_y / 10;
-
+        help += delta_y / 10;
+        if(help > 2) viewerZ = help;
     }
 
     gluLookAt(0.0, 0.0, viewerZ, centerX, centerY, centerZ, 0.0, 1.0, 0.0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
     glRotatef(objectRotation[0], 0.0, 1.0, 0.0);
     glRotatef(objectRotation[1], 1.0, 0.0, 0.0);
+
+    if(help <= 2) {
+        glTranslatef(0.0, 0.0, 2 - help);
+    }
 
     if (objectMode == 1) Triangle();
     else if (objectMode == 2) Pyramid();
@@ -561,7 +566,7 @@ void myInit() {
 
 // Teksturowanie będzie prowadzone tylko po jednej stronie ściany
 
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     //glCullFace(GL_FRONT);
 
 // Przeczytanie obrazu tekstury z pliku o nazwie tekstura.tga
