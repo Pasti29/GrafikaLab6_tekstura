@@ -1,0 +1,3 @@
+D:/Projects/CLion/GrafikaLab6_tekstura/cmake-build-debug/CMakeFiles/GrafikaLab6_tekstura.dir
+D:/Projects/CLion/GrafikaLab6_tekstura/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Projects/CLion/GrafikaLab6_tekstura/cmake-build-debug/CMakeFiles/rebuild_cache.dir

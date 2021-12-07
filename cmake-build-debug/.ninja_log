@@ -1,0 +1,8 @@
+# ninja log v5
+0	1225	6605255573613804	CMakeFiles/GrafikaLab6_tekstura.dir/main.cpp.obj	b3ac06c0e8152760
+1225	1457	6605255575656195	GrafikaLab6_tekstura.exe	9e72ac1ffd275db4
+11	900	6605266367747221	CMakeFiles/GrafikaLab6_tekstura.dir/textures.cpp.obj	61c4cb488923ce4e
+1	1052	6605266369254483	CMakeFiles/GrafikaLab6_tekstura.dir/main.cpp.obj	b3ac06c0e8152760
+1052	1278	6605266371234193	GrafikaLab6_tekstura.exe	b40a3aeb37eb701e
+1	939	6605267150208936	CMakeFiles/GrafikaLab6_tekstura.dir/main.cpp.obj	b3ac06c0e8152760
+939	1098	6605267151529222	GrafikaLab6_tekstura.exe	b40a3aeb37eb701e

@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "D:/Projects/CLion/GrafikaLab6_tekstura/cmake-build-debug/CMakeFiles/GrafikaLab6_tekstura.dir/embed.manifest"
