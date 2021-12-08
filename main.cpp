@@ -56,6 +56,7 @@ static int status = 0;
 // 2 - naciśnięty prawy klawisz
 
 static float objectRotation[] = {0.0, 0.0};
+static float objectRotationBeforeZoom[] = {0.0, 0.0};
 
 static float pix2angle;     // przelicznik pikseli na stopnie
 
@@ -253,14 +254,11 @@ void Pyramid() {
 
 // Funkcja obsługująca rysowanie jajka
 void Egg() {
-    //glDisable(GL_CULL_FACE);
     drawWhiteTriangles();
-    //glEnable(GL_CULL_FACE);
 }
 
 
 void renderScene() {
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);        // czyszczenie okna aktualnym kolorem czyszczącym
 
     glLoadIdentity();    // czyszczenie macierzy bieżącej
@@ -271,13 +269,14 @@ void renderScene() {
         objectRotation[1] += delta_y * pix2angle;
 
         if (objectRotation[0] > 360.0) objectRotation[0] -= 360.0;
-        else if (objectRotation[0] < -360.0) objectRotation[0] += 360.0;
+        else if (objectRotation[0] < 0) objectRotation[0] += 360.0;
         if (objectRotation[1] > 360) objectRotation[1] -= 360.0;
-        else if (objectRotation[1] < -360.0) objectRotation[1] += 360.0;
+        else if (objectRotation[1] < 0) objectRotation[1] += 360.0;
 
     } else if (status == 2) {       // jeśli prawy klawisz myszy wciśnięty
         help += delta_y / 10;
-        if(help > 2) viewerZ = help;
+        if(help > 1) viewerZ = help;
+        if(help > 20) help = 20;
     }
 
     gluLookAt(0.0, 0.0, viewerZ, centerX, centerY, centerZ, 0.0, 1.0, 0.0);
@@ -285,8 +284,29 @@ void renderScene() {
     glRotatef(objectRotation[0], 0.0, 1.0, 0.0);
     glRotatef(objectRotation[1], 1.0, 0.0, 0.0);
 
-    if(help <= 2) {
-        glTranslatef(0.0, 0.0, 2 - help);
+    if (help > 1) {
+        objectRotationBeforeZoom[0] = objectRotation[0];
+        objectRotationBeforeZoom[1] = objectRotation[1];
+    } else if (help < 1) {
+
+        if (objectRotationBeforeZoom[1] >= 45 && objectRotationBeforeZoom[1] <= 135) {
+            glTranslatef(0.0, 1 - help, 0.0);
+        } else if (objectRotationBeforeZoom[1] >= 225 && objectRotationBeforeZoom[1] <= 315) {
+            glTranslatef(0.0, -(1 - help), 0.0);
+        } else {
+            if (objectRotationBeforeZoom[0] <= 45 || objectRotationBeforeZoom[0] >= 315) {
+                glTranslatef(0.0, 0.0, 1 - help);
+            }
+            if (objectRotationBeforeZoom[0] <= 315 && objectRotationBeforeZoom[0] >= 225) {
+                glTranslatef(1 - help, 0.0, 0.0);
+            }
+            if (objectRotationBeforeZoom[0] <= 225 && objectRotationBeforeZoom[0] >= 135) {
+                glTranslatef(0.0, 0.0, -(1 - help));
+            }
+            if (objectRotationBeforeZoom[0] <= 135 && objectRotationBeforeZoom[0] >= 45) {
+                glTranslatef(-(1 - help), 0.0, 0.0);
+            }
+        }
     }
 
     if (objectMode == 1) Triangle();
@@ -360,17 +380,6 @@ void setVertices() {
 
         }
     }
-    /*
-    for (int i = N / 2; i < N; i++) {
-        for (int j=0; j < N; j++) {
-            ARRAY[i][j].texture[0] = ARRAY[N - i - 1][N - 1].texture[0];
-            ARRAY[i][0].texture[1] = ARRAY[N - i - 1][N - 1].texture[1];
-            ARRAY[i][N - 1].texture[0] = ARRAY[N - i - 1][0].texture[0];
-            ARRAY[i][N - 1].texture[1] = ARRAY[N - i - 1][0].texture[1];
-        }
-
-    }
-     */
 }
 
 // Funkcja inicjalizuje tablicę 'ARRAY' oraz wywołuje funkcje inicjalizujące
@@ -566,7 +575,7 @@ void myInit() {
 
 // Teksturowanie będzie prowadzone tylko po jednej stronie ściany
 
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     //glCullFace(GL_FRONT);
 
 // Przeczytanie obrazu tekstury z pliku o nazwie tekstura.tga
